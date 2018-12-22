@@ -1,21 +1,24 @@
+const Player = require('./classes/player.js');
 const Schema = require('validate');
 const express = require('express');
 const app = express();
 const http = require('http').Server(app);
-const pug = require('pug');
+//const pug = require('pug');
 const router = express.Router();
-var bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser');
-
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const port = 5000;
+
+var users = {}
+
 http.listen(port, (err) => {
 	if (err) return console.log(err);
 	return console.log('Listening on port ' + port);
 });
 
 app.use(express.static('public'));
-app.set('view engine', 'pug');
-app.set('views',  __dirname + '/views');
+app.use(express.static('views'));
+//app.set('view engine', 'pug');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
@@ -23,10 +26,10 @@ app.use(bodyParser.urlencoded({
 app.use(cookieParser('secret'));
 
 app.get('/', (req, res)=> {
-  res.render('index.pug');
+  res.sendFile('index.html');
 });
-//const users = {'admin': new User('admin', ...)};
-const admin = new Schema({
+
+const validLoginFormat = new Schema({
 	username: {
 		type: String,
 		required: true,
@@ -39,21 +42,27 @@ const admin = new Schema({
 	}
 });
 
-app.get('/partials/login', (req, res)=> {
-		console.log('received request for partial');
-		res.render('loginform.pug');
-});
+function validateLogin(username, password) {
+	if (data.username == 'admin' && data.password == 'guest') return true;
+	else {
+		user = users[username];
+		if (user) {
+			if (user.password == password) return true;		
+		}
+	}
+	return false;
+}
 
 app.post('/login', (req, res)=> {
+	console.log(req.body);
 	let data = {username: req.body.username, password: req.body.password};
 	console.log(data);
-	let errors = admin.validate(data);
+	let errors = validLoginFormat.validate(data);
 	if (errors.length == 0) {
-		if (data.username == 'admin' && data.password == 'guest') {
+		if (validateLogin(data.username, data.password)) {
 			console.log("login success");
-			res.cookie('username', data.username, {maxAge: 18000, signed: true, httpOnly: true});
-			res.json({page: 'home'
-			});
+			res.cookie('username', data.username, {maxAge: 900000, signed: true, httpOnly: true});
+			res.json({message: 'login success'});
 			return;
 		}
 	}
@@ -61,21 +70,30 @@ app.post('/login', (req, res)=> {
 });
 
 app.get('/logout', (req, res)=> {
+	console.log('logging out');
 	res.clearCookie('username');
-	res.json({
-	});
+	res.json({message: 'logout success'});
 });
 
-app.get('/create', loggedIn, (req, res)=> {
+app.get('/create', needsAuth, (req, res)=> {
 	res.json({});
 });
 
+app.get('/add', needsAuth, (req, res)=> {
+	res.json({});
+});
 
-function loggedIn(req, res, next) {
-	if (req.signedCookies.username == 'admin') {
+app.get('/auth', (req, res)=> {
+	res.json({loggedIn: loggedIn(req)});
+});
+
+function loggedIn(req) {
+	return req.signedCookies.username == 'admin';
+}
+
+function needsAuth(req, res, next) {
+	if (loggedIn(req)) {
 		return next();
 	}
 	res.status(400).json('You must be signed in as admin to view this page');	
 }
-
-//middleware to check if authentication needed

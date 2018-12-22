@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<link rel="stylesheet" href="style.css">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+	<header>
+		<a id="login-link"></a>
+	</header>
+	<div id="main-content">
+	</div>
+	<div id="hidden-content">
+	</div>
+</body>
+<script src="mustache.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="jquery.hashroute.js"></script>
+<script src="script.js"></script>
+<script id="login" type="x-tmpl-mustache">
+	<form id="loginform">
+		<input id='username' type='text' placeholder='username' name='username'>
+		<input id='password' type='password' placeholder='password' name='password'>
+		<input id='login-button' type='submit' value='go'>
+	</form>
+</script>
+
+<script id="home" type="x-tmpl-mustache">
+	<h3 id="title">Welcome to ChessNut</h3>
+</script>
+</html>
