@@ -28,4 +28,28 @@
 <script id="home" type="x-tmpl-mustache">
 	<h3 id="title">Welcome to ChessNut</h3>
 </script>
+
+<script id="register" type="x-tmpl-mustache">
+	<h3 id="title">Register</h3>
+	<form id="registrationform">
+		<input id='username' type='text' placeholder='username' name='username'>
+		<input id='password' type='password' placeholder='password' name='password'>
+		<input id='rating' type='number' placeholder='rating' name='rating'>
+		<input id='description' type='text' placeholder='description' name='description'>
+		<input id='register-button' type='submit' value='sign up'>
+	</form>
+</script>
+
+<script id="update" type="x-tmpl-mustache">
+	<form id="gameform">
+		<input id='white' type='text' placeholder='white' name='white'>
+		<input id='black' type='text' placeholder='black' name='black'>
+		<select id='gameresult'>
+			<option value='w'>White wins</option>
+			<option value='b'>Black wins</option>
+			<option value='d'>Draw</option>
+		</select>
+		<input id='gamebutton' type='submit' value='sign up'>
+	</form>
+</script>
 </html>

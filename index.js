@@ -1,3 +1,4 @@
+const League = require('./classes/league.js');
 const Player = require('./classes/player.js');
 const Schema = require('validate');
 const express = require('express');
@@ -9,7 +10,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const port = 5000;
 
-var users = {}
+let league = new League();
 
 http.listen(port, (err) => {
 	if (err) return console.log(err);
@@ -28,7 +29,27 @@ app.use(cookieParser('secret'));
 app.get('/', (req, res)=> {
   res.sendFile('index.html');
 });
-
+const validPlayerRegistration = new Schema({
+	username: {
+		type: String,
+		required: true,
+		length: {min: 3, max: 16}
+	},
+	password: {
+		type: String,
+		required: true,
+		length: {min: 5, max: 20}
+	},
+	rating: {
+		type: Number,
+		required: true,
+	},
+	description: {
+		type: String,
+		required: false,
+		length: {max: 500}
+	}
+});
 const validLoginFormat = new Schema({
 	username: {
 		type: String,
@@ -43,19 +64,14 @@ const validLoginFormat = new Schema({
 });
 
 function validateLogin(username, password) {
-	if (data.username == 'admin' && data.password == 'guest') return true;
+	if (username == 'admin' && password == 'guest') return true;
 	else {
-		user = users[username];
-		if (user) {
-			if (user.password == password) return true;		
-		}
+		return league.validate(username, password);
 	}
-	return false;
 }
 
 app.post('/login', (req, res)=> {
-	console.log(req.body);
-	let data = {username: req.body.username, password: req.body.password};
+	let data = req.body;
 	console.log(data);
 	let errors = validLoginFormat.validate(data);
 	if (errors.length == 0) {
@@ -75,12 +91,32 @@ app.get('/logout', (req, res)=> {
 	res.json({message: 'logout success'});
 });
 
-app.get('/create', needsAuth, (req, res)=> {
-	res.json({});
+app.post('/register', (req, res)=> {
+	console.log(req.body);
+	let data = req.body;
+	console.log(data);
+	let errors = validPlayerRegistration.validate(data);
+	console.log()
+	if (errors.length == 0) {
+		let player = new Player(data.username, data.password, data.rating, data.description);
+		league.addPlayer(player);
+		res.cookie('username', data.username, {maxAge: 900000, signed: true, httpOnly: true});
+		res.json({message: 'success'});
+		return;
+	}
+	res.status(400).json({message: 'Invalid format', data: errors});
 });
 
-app.get('/add', needsAuth, (req, res)=> {
-	res.json({});
+app.post('/update', needsAuth, (req, res)=> {
+	console.log(req.body);
+	let data = req.body;
+	console.log(data);
+	if (data.white in league.players && data.black in league.players) {
+		league.addGame(data);
+		res.json({message: 'success'});
+		return;
+	}
+	res.status(400).json({message: 'Invalid format'});	
 });
 
 app.get('/auth', (req, res)=> {
@@ -88,7 +124,7 @@ app.get('/auth', (req, res)=> {
 });
 
 function loggedIn(req) {
-	return req.signedCookies.username == 'admin';
+	return (req.signedCookies.username == 'admin' || req.signedCookies.username in league.players);
 }
 
 function needsAuth(req, res, next) {

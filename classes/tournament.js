@@ -5,7 +5,7 @@ class Tournament {
 		this._players = [];
 	}
 
-	function addPlayer(player) {
+	addPlayer(player) {
 		if (this.size == this._players.length) throw "tournament full";
 		duplicate = false;
 		for (let i=0; i<this._players.length; i++) {
