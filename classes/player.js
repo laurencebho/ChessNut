@@ -1,6 +1,8 @@
 class Player {
-	constructor(name, password, rating, description) {
+	constructor(name, firstname, surname, password, rating, description) {
 		this._name = name;
+        this._firstname = firstname;
+        this._surname = surname;
 		this._password = password;
 		this._rating = rating;
 		this._description = description;
@@ -8,6 +10,14 @@ class Player {
 
 	get name() {
 		return this._name;
+	}
+	
+    get firstname() {
+		return this._firstname;
+	}
+	
+    get surname() {
+		return this._surname;
 	}
 
 	get password() {

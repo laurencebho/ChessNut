@@ -4,7 +4,6 @@ const Schema = require('validate');
 const express = require('express');
 const app = express();
 const http = require('http').Server(app);
-//const pug = require('pug');
 const router = express.Router();
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -18,23 +17,32 @@ http.listen(port, (err) => {
 });
 
 app.use(express.static('public'));
-app.use(express.static('views'));
-//app.set('view engine', 'pug');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(cookieParser('secret'));
 
-app.get('/', (req, res)=> {
-  res.sendFile('index.html');
+app.get('/home', (req, res)=> {
+    res.json({leaderboard: league.calculateLeaderboard()});
 });
+
 const validPlayerRegistration = new Schema({
 	username: {
 		type: String,
 		required: true,
 		length: {min: 3, max: 16}
 	},
+    firstname: {
+		type: String,
+		required: true,
+		length: {max: 16}
+    },
+    surname: {
+		type: String,
+		required: true,
+		length: {max: 16}
+    },
 	password: {
 		type: String,
 		required: true,
@@ -92,44 +100,61 @@ app.get('/logout', (req, res)=> {
 });
 
 app.post('/register', (req, res)=> {
-	console.log(req.body);
 	let data = req.body;
-	console.log(data);
 	let errors = validPlayerRegistration.validate(data);
-	console.log()
 	if (errors.length == 0) {
-		let player = new Player(data.username, data.password, data.rating, data.description);
+		let player = new Player(data.username, data.firstname, data.surname, data.password, data.rating, data.description);
 		league.addPlayer(player);
 		res.cookie('username', data.username, {maxAge: 900000, signed: true, httpOnly: true});
 		res.json({message: 'success'});
+        console.log('new user registered');
 		return;
 	}
 	res.status(400).json({message: 'Invalid format', data: errors});
 });
 
 app.post('/update', needsAuth, (req, res)=> {
-	console.log(req.body);
 	let data = req.body;
-	console.log(data);
 	if (data.white in league.players && data.black in league.players) {
+        let d = new Date();
+        data.date = d.toISOString().substring(0, 10); //yyyy-mm-dd format
 		league.addGame(data);
 		res.json({message: 'success'});
+        console.log('new game added');
 		return;
 	}
 	res.status(400).json({message: 'Invalid format'});	
 });
 
-app.get('/auth', (req, res)=> {
-	res.json({loggedIn: loggedIn(req)});
+app.get('/player/:name', (req, res)=> {
+    let name = req.params.name;
+    if (name in league.players) {
+        let player = league.players[name];
+        res.json({games: league.formatGames(league.getGameHistory(player)), fullname: player.firstname + ' ' + player.surname});
+    }
+    res.status(400).json({message: 'Player ' + name + ' not found'});
 });
 
-function loggedIn(req) {
-	return (req.signedCookies.username == 'admin' || req.signedCookies.username in league.players);
+app.get('/games', (req,res)=> {
+    res.json({games: league.formatGames(league.recentGames())});
+});
+
+app.get('/auth', (req, res)=> {
+    let data = {privilege: privilege(req)}
+    if (data.privilege == 'user') data.username = req.signedCookies.username;
+	res.json(data);
+});
+
+function privilege(req) {
+    let username = req.signedCookies.username;
+	if (username == 'admin') return 'admin'
+    else if (username in league.players) return 'user';
+    return 'none';
 }
 
 function needsAuth(req, res, next) {
-	if (loggedIn(req)) {
+	if (privilege(req) == 'admin') {
 		return next();
 	}
-	res.status(400).json('You must be signed in as admin to view this page');	
+	res.status(400).json('You must be signed in as admin to use this page');	
 }
