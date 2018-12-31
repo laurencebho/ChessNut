@@ -1,7 +1,8 @@
 class League {
 	constructor() {
-		this._games = []
-		this._players = {}
+		this._games = [];
+		this._players = {};
+        this._leagueStatus = "";
 	}
 
 	get games() {
@@ -11,6 +12,14 @@ class League {
 	get players() {
 		return this._players;
 	}
+
+    get leagueStatus() {
+        return this._leagueStatus;
+    }
+
+    set leagueStatus(leagueStatus) {
+        this._leagueStatus = leagueStatus;
+    }
 
 	addGame(game) {
 		this._games.unshift(game);
@@ -84,8 +93,9 @@ class League {
             let player = this._players[key];
             let score = this.getScore(player);
             scores.push({
+                name: player.name,
                 score: score,
-                name: player.firstname + ' ' + player.surname,
+                fullname: player.firstname + ' ' + player.surname,
                 formattedScore: score[0] + ' / ' + score[1] 
             });
         }
@@ -104,13 +114,23 @@ class League {
         let earned = 0;
         let conceded = 0;
         let games = this._games;
-        for (let i-0; i<games.length; i++) {
+        for (let i=0; i<games.length; i++) {
             if (games[i].white == player) {
                 if (games[i].black == opponent) {
-                    games[i].result
+                    let result = games[i].result;
+                    earned += result[0];
+                    conceded += result[1];
+                }
+            }
+            else if (games[i].black == player) {
+                if (games[i].white == opponent) {
+                    let result = games[i].result;
+                    earned += result[1];
+                    conceded += result[0];
                 }
             }
         }
+        return earned + " - " + conceded;
     }
 	
 }

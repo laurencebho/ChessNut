@@ -57,9 +57,13 @@
 </script>
 
 <script id="leaderboard" type="x-tmpl-mustache">
+	{{#leagueStatus}}
+	<h3>Status</h3>
+	<p>{{leagueStatus}}</p>
+	{{/leagueStatus}}
 	<h3 id="title">Leaderboard</h3>
 	{{^leaderboard}}
-	<p>No players to show right now.</p>
+	<p>No players to show yet.</p>
 	{{/leaderboard}}
 	{{#leaderboard.length}}
 	<table class="pure-table">
@@ -75,7 +79,7 @@
 	    	{{#leaderboard}}
 	        <tr>
 	        	<td>{{rank}}</td>
-	            <td>{{name}}</td>
+	            <td><a href="#/player/{{name}}">{{fullname}}</a></td>
 	            <td>{{formattedScore}}</td>
 	        </tr>
 	        {{/leaderboard}}
@@ -105,24 +109,43 @@
 
 <script id="update" type="x-tmpl-mustache">
 	<form id="gameform" class="pure-form">
-    <fieldset>
-        <legend>Add Game</legend>
-		<input id='white' type='text' placeholder='white'>
-		<input id='black' type='text' placeholder='black'>
+	    <fieldset>
+	        <legend>Add Game</legend>
+			<input id='white' type='text' placeholder='white'>
+			<input id='black' type='text' placeholder='black'>
 
-		<select id='gameresult'>
-			<option value='w'>White wins</option>
-			<option value='b'>Black wins</option>
-			<option value='d'>Draw</option>
-		</select>
+			<select id='gameresult'>
+				<option value='w'>White wins</option>
+				<option value='b'>Black wins</option>
+				<option value='d'>Draw</option>
+			</select>
 
-        <button id="gamebutton" type="submit" class="pure-button pure-button-primary">add</button>
-    </fieldset>
-</form>
+	        <button id="gamebutton" type="submit" class="pure-button pure-button-primary">add</button>
+	    </fieldset>
+	</form>
+
+	<form id="statusform" class="pure-form pure-form-stacked">
+	    <fieldset>
+	        <legend>Update League Status</legend>
+			<textarea id="status" placeholder="status">{{leagueStatus}}</textarea>
+	        <button id="statusbutton" type="submit" class="pure-button pure-button-primary">update</button>
+	    </fieldset>
+	</form>
 </script>
 
 <script id="player" type="x-tmpl-mustache">
-	<h3 id="title">{{fullname}}</h3>
+	<h3 id="title">{{fullname}} ({{name}})</h3>
+	{{#matchup}}
+	<p>Your overall score vs {{name}}: {{matchup}}</p>
+	{{/matchup}}
+	<p>Rating: {{rating}}</p>
+	{{#description}}
+	<p>{{description}}</p>
+	{{/description}}
+	{{^games}}
+	<p>No games played yet.</p>
+	{{/games}}
+	{{#games.length}}
 	<table class="pure-table">
 	    <thead>
 	        <tr>
@@ -137,13 +160,14 @@
 			{{#games}}
 	        <tr>
 	            <td>{{date}}</td>
-	            <td>{{white}}</td>
-	            <td>{{black}}</td>
+	            <td><a href="#/player/{{white}}">{{white}}</a></td>
+	            <td><a href="#/player/{{black}}">{{black}}</a></td>
 	            <td>{{result}}</td>
 	        </tr>
 	        {{/games}}
 	    </tbody>
 	</table>
+	{{/games.length}}
 </script>
 
 <script id="games" type="x-tmpl-mustache">
@@ -166,8 +190,8 @@
 			{{#games}}
 	        <tr>
 	            <td>{{date}}</td>
-	            <td>{{white}}</td>
-	            <td>{{black}}</td>
+	            <td><a href="#/player/{{white}}">{{white}}</a></td>
+	            <td><a href="#/player/{{black}}">{{black}}</a></td>
 	            <td>{{result}}</td>
 	        </tr>
 	        {{/games}}

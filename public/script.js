@@ -73,32 +73,46 @@ $(document).hashroute("/update", (e)=> {
         display("error400");
     }
     else {
-        display("update");
-        $(document).off("submit", "#gameform").on("submit", "#gameform", (e)=> {
-            let gameResult;
-            switch($("#gameresult").val()) {
-                case "w":
-                    gameResult = [1, 0];
-                    break;
-                case "b":
-                    gameResult = [0, 1];
-                    break;
-                case "d":
-                    gameResult = [0.5, 0.5];
-                    break;
-                default:
-                    break;
-            }
-            $.ajax({
-                method: "POST",
-                url: "/update",
-                data: JSON.stringify({white: $("#white").val(), black: $("#black").val(), result: gameResult}),
-                success: (data)=> { //data to render homepage
-                    console.log("game added");
-                    console.log(data);
+        $.get("/update", (data)=> {
+            console.log(data);
+            display("update", data);
+            $(document).off("submit", "#gameform").on("submit", "#gameform", ()=> {
+                let gameResult;
+                switch($("#gameresult").val()) {
+                    case "w":
+                        gameResult = [1, 0];
+                        break;
+                    case "b":
+                        gameResult = [0, 1];
+                        break;
+                    case "d":
+                        gameResult = [0.5, 0.5];
+                        break;
+                    default:
+                        break;
                 }
+                $.ajax({
+                    method: "POST",
+                    url: "/update",
+                    data: JSON.stringify({white: $("#white").val(), black: $("#black").val(), result: gameResult}),
+                    success: (data)=> { //data to render homepage
+                        console.log("game added");
+                        console.log(data.message);
+                    }
+                });
+            return false;
             });
-        return false;
+
+            $(document).off("submit", "#statusform").on("submit", "#statusform", ()=> {
+                $.ajax({
+                    method: "POST",
+                    url: "/status",
+                    data: JSON.stringify({leagueStatus: $("#status").val()}),
+                    success: (data)=> {
+                        console.log(data.message);
+                    }
+                });
+            });
         });
     }
 });

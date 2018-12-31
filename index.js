@@ -24,7 +24,7 @@ app.use(bodyParser.urlencoded({
 app.use(cookieParser('secret'));
 
 app.get('/home', (req, res)=> {
-    res.json({leaderboard: league.calculateLeaderboard()});
+    res.json({leaderboard: league.calculateLeaderboard(), leagueStatus: league.leagueStatus});
 });
 
 const validPlayerRegistration = new Schema({
@@ -113,6 +113,10 @@ app.post('/register', (req, res)=> {
 	res.status(400).json({message: 'Invalid format', data: errors});
 });
 
+app.get('/update', needsAuth, (req, res)=> {
+    res.json({leagueStatus: league.leagueStatus});
+});
+
 app.post('/update', needsAuth, (req, res)=> {
 	let data = req.body;
 	if (data.white in league.players && data.black in league.players) {
@@ -126,11 +130,34 @@ app.post('/update', needsAuth, (req, res)=> {
 	res.status(400).json({message: 'Invalid format'});	
 });
 
+app.post('/status', needsAuth, (req, res)=> {
+    let data = req.body;
+    if (data.leagueStatus) {
+        league.leagueStatus = data.leagueStatus;
+        res.json({message: 'success'});
+        console.log('status updated');
+        return;
+    }
+    res.status(400).json({message: 'No status supplied'});
+});
+
 app.get('/player/:name', (req, res)=> {
     let name = req.params.name;
     if (name in league.players) {
         let player = league.players[name];
-        res.json({games: league.formatGames(league.getGameHistory(player)), fullname: player.firstname + ' ' + player.surname});
+        let data = {
+            name: name,
+            games: league.formatGames(league.getGameHistory(player)),
+            fullname: player.firstname + ' ' + player.surname,
+            rating: player.rating,
+        };
+        if (player.description != '') data.description = player.description;
+        let currPlayer = req.signedCookies.username;
+        if (currPlayer != name && currPlayer in league.players) {
+            data.matchup = league.getMatchup(currPlayer, name); 
+        }
+        res.json(data);
+        return;
     }
     res.status(400).json({message: 'Player ' + name + ' not found'});
 });
