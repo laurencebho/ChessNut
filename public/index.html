@@ -40,8 +40,7 @@
 		</div>
 	</div>
 	<div class="content">
-		<div id="main-content">
-		</div>
+		<div id="main-content"></div>
 	</div>
 </body>
 <script src="menu.js"></script>
@@ -54,6 +53,10 @@
 		</fieldset>
 		<button id="login-button" type="submit" class="pure-button pure-input-1-2 pure-button-primary">sign in</button>
 	</form>
+</script>
+
+<script id="alert" type="x-tmpl-mustache">
+		<div class="pure-alert pure-alert-{{type}}">{{message}}</div>
 </script>
 
 <script id="leaderboard" type="x-tmpl-mustache">
@@ -200,9 +203,14 @@
 	{{/games.length}}
 </script>
 
-<script id="error400" type="x-tmpl-mustache">
+<script id="error403" type="x-tmpl-mustache">
 	<h3 id="title">Permission Denied</h3>
-	<p>You don't have permission to use this page</p>
+	<p>You don't have permission to use this page.</p>
+</script>
+
+<script id="error404" type="x-tmpl-mustache">
+	<h3 id="title">Not Found</h3>
+	<p>Sorry, this page doesn't seem to exist.</p>
 </script>
 
 </html>

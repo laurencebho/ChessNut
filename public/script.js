@@ -38,7 +38,10 @@ $(document).hashroute("/login", ()=> {
 				console.log("logged in");
 				console.log(data);
 				window.location.hash = '/';
-			}
+			},
+            error: (e)=> {
+                displayAlert("loginform", e.responseJSON);
+            }
 		});
 		return false; //prevent reloading of page
 	});
@@ -62,7 +65,10 @@ $(document).hashroute("/register", ()=> {
 				console.log("registered and logged in");
 				console.log(data);
 				window.location.hash = '/';
-			}
+			},
+            error: (e)=> {
+                displayAlert("registrationform", e.responseJSON);
+            }
 		});
 		return false;
 	});
@@ -70,7 +76,7 @@ $(document).hashroute("/register", ()=> {
 
 $(document).hashroute("/update", (e)=> {
     if (!e.admin) {
-        display("error400");
+        display("error403");
     }
     else {
         $.get("/update", (data)=> {
@@ -97,7 +103,10 @@ $(document).hashroute("/update", (e)=> {
                     data: JSON.stringify({white: $("#white").val(), black: $("#black").val(), result: gameResult}),
                     success: (data)=> { //data to render homepage
                         console.log("game added");
-                        console.log(data.message);
+                        displayAlert("gameform", data);
+                    },
+                    error: (e)=> {
+                        displayAlert("gameform", e.responseJSON);
                     }
                 });
             return false;
@@ -109,7 +118,11 @@ $(document).hashroute("/update", (e)=> {
                     url: "/status",
                     data: JSON.stringify({leagueStatus: $("#status").val()}),
                     success: (data)=> {
-                        console.log(data.message);
+                        console.log("status updated");
+                        displayAlert("statusform", data);
+                    },
+                    error: (e)=> {
+                        displayAlert("statusform", e.responseJSON);
                     }
                 });
             });
@@ -134,6 +147,10 @@ $(document).hashroute("/games", ()=> {
     $.get("/games", (data)=> {
         display("games", data);
     });
+});
+
+$(document).hashroute('404', function(e) {
+    display("error404");
 });
 
 function display(id, data) {
@@ -163,4 +180,10 @@ function setMenu(privilege, username) {
         $("#login-link").text("login");			
         $("#register-item").removeAttr("hidden");
     }
+}
+
+function displayAlert(form, data) {
+    $(".pure-alert").remove(); //clear existing alerts
+    let rendered = Mustache.render($("#alert").html(), data);
+    $("#" + form).after(rendered);
 }

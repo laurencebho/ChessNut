@@ -86,11 +86,11 @@ app.post('/login', (req, res)=> {
 		if (validateLogin(data.username, data.password)) {
 			console.log("login success");
 			res.cookie('username', data.username, {maxAge: 900000, signed: true, httpOnly: true});
-			res.json({message: 'login success'});
+			res.json({type: 'success', message: 'Logged in successfully'});
 			return;
 		}
 	}
-	res.status(400).json({message: 'Incorrect credentials, please try again'});
+	res.status(400).json({type: 'error', message: errors[0]});
 });
 
 app.get('/logout', (req, res)=> {
@@ -106,11 +106,11 @@ app.post('/register', (req, res)=> {
 		let player = new Player(data.username, data.firstname, data.surname, data.password, data.rating, data.description);
 		league.addPlayer(player);
 		res.cookie('username', data.username, {maxAge: 900000, signed: true, httpOnly: true});
-		res.json({message: 'success'});
+		res.json({type: 'success', message: 'Registered and logged in successfully'});
         console.log('new user registered');
 		return;
 	}
-	res.status(400).json({message: 'Invalid format', data: errors});
+	res.status(400).json({type: 'error', message: errors[0]});
 });
 
 app.get('/update', needsAuth, (req, res)=> {
@@ -119,26 +119,29 @@ app.get('/update', needsAuth, (req, res)=> {
 
 app.post('/update', needsAuth, (req, res)=> {
 	let data = req.body;
-	if (data.white in league.players && data.black in league.players) {
+	if (data.white in league.players && data.black in league.players && data.white != data.black) {
         let d = new Date();
         data.date = d.toISOString().substring(0, 10); //yyyy-mm-dd format
 		league.addGame(data);
-		res.json({message: 'success'});
+		res.json({
+			type: 'success',
+			message: 'Game ' + data.white + ' vs ' + data.black + ' added successfully'
+			});
         console.log('new game added');
 		return;
 	}
-	res.status(400).json({message: 'Invalid format'});	
+	res.status(400).json({type: 'error', message: 'Cannot add game: players are invalid'});	
 });
 
 app.post('/status', needsAuth, (req, res)=> {
     let data = req.body;
     if (data.leagueStatus) {
         league.leagueStatus = data.leagueStatus;
-        res.json({message: 'success'});
+        res.json({type: 'success', message: 'Status updated successfully'});
         console.log('status updated');
         return;
     }
-    res.status(400).json({message: 'No status supplied'});
+    res.status(400).json({type: 'error', message: 'No status supplied'});
 });
 
 app.get('/player/:name', (req, res)=> {
