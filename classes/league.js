@@ -1,3 +1,5 @@
+const Player = require("./player.js");
+
 class League {
 	constructor() {
 		this._games = [];
@@ -26,7 +28,7 @@ class League {
 	}
 
 	addPlayer(player) {
-		this._players[player.name] = player;
+		this._players[player.username] = player;
 	}
 
     recentGames() { //10 most recently added games
@@ -41,7 +43,7 @@ class League {
 		let hist = [];
 		for (let i=0; i<this._games.length; i++) {
 			let game = this._games[i];
-			if (game.white == player.name || game.black == player.name) {
+			if (game.white == player.username || game.black == player.username) {
 				hist.push(game);
 			}
 		}
@@ -61,8 +63,8 @@ class League {
         }
         return formatted;
     }
-	validate(name, password) {
-		let player = this._players[name];
+	validate(username, password) {
+		let player = this._players[username];
 		if (player) {
 			if (player.password == password) {
 				return true;
@@ -77,7 +79,7 @@ class League {
         let total = hist.length;
         for (let i=0; i<total; i++) {
             let game = hist[i];
-            if (game.white == player.name) {
+            if (game.white == player.username) {
                 earned += game.result[0];
             }
             else {
@@ -93,9 +95,10 @@ class League {
             let player = this._players[key];
             let score = this.getScore(player);
             scores.push({
-                name: player.name,
+                username: player.username,
                 score: score,
-                fullname: player.firstname + ' ' + player.surname,
+                forename: player.forename,
+                surname: player.surname,
                 formattedScore: score[0] + ' / ' + score[1] 
             });
         }
@@ -132,7 +135,17 @@ class League {
         }
         return earned + " - " + conceded;
     }
-	
+    
+    addDefaultPlayers() {
+        this.addPlayer(new Player(
+            "doctorwhocomposer",
+            "Delia",
+            "Derbyshire",
+            "guest",
+            1200,
+            "The composer of the Doctor Who theme."
+        ));
+    }	
 }
 
 module.exports = League;

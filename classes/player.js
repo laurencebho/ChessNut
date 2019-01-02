@@ -1,19 +1,19 @@
 class Player {
-	constructor(name, firstname, surname, password, rating, description) {
-		this._name = name;
-        this._firstname = firstname;
+	constructor(username, forename, surname, password, rating, description) {
+		this._username = username;
+        this._forename = forename;
         this._surname = surname;
 		this._password = password;
 		this._rating = rating;
 		this._description = description;
 	}
 
-	get name() {
-		return this._name;
+	get username() {
+		return this._username;
 	}
 	
-    get firstname() {
-		return this._firstname;
+    get forename() {
+		return this._forename;
 	}
 	
     get surname() {

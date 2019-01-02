@@ -55,7 +55,7 @@ $(document).hashroute("/register", ()=> {
 			url: "/register",
 			data: JSON.stringify({
                 username: $("#username").val(),
-                firstname: $("#firstname").val(),
+                forename: $("#forename").val(),
                 surname: $("#surname").val(),
                 password: $("#password").val(),
                 rating: Number($("#rating").val()),
@@ -137,8 +137,8 @@ $(document).hashroute("/logout", ()=> {
 	});
 });
 
-$(document).hashroute("/player/:name", (e)=> {
-    $.get("/player/" + e.params.name, (data)=> {
+$(document).hashroute("/player/:username", (e)=> {
+    $.get("/player/" + e.params.username, (data)=> {
         display("player", data);
     });
 });

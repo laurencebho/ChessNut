@@ -56,7 +56,10 @@
 </script>
 
 <script id="alert" type="x-tmpl-mustache">
-		<div class="pure-alert pure-alert-{{type}}">{{message}}</div>
+	<div class="pure-alert pure-alert-{{type}}">
+		<label><strong>{{type}}:</strong></label>
+		{{message}}
+	</div>
 </script>
 
 <script id="leaderboard" type="x-tmpl-mustache">
@@ -82,7 +85,7 @@
 	    	{{#leaderboard}}
 	        <tr>
 	        	<td>{{rank}}</td>
-	            <td><a href="#/player/{{name}}">{{fullname}}</a></td>
+	            <td><a href="#/player/{{username}}">{{forename}} {{surname}}</a></td>
 	            <td>{{formattedScore}}</td>
 	        </tr>
 	        {{/leaderboard}}
@@ -96,7 +99,7 @@
 		<legend>Register</legend>
 		<fieldset class="pure-group">
 			<input id='username' type="text" class="pure-input-1-2" placeholder="username">
-			<input id='firstname' type="text" class="pure-input-1-2" placeholder="first name">
+			<input id='forename' type="text" class="pure-input-1-2" placeholder="forename">
 			<input id='surname' type="text" class="pure-input-1-2" placeholder="surname">
 			<input id='password' type="password" class="pure-input-1-2" placeholder="password">
 		</fieldset>
@@ -137,13 +140,16 @@
 </script>
 
 <script id="player" type="x-tmpl-mustache">
-	<h3 id="title">{{fullname}} ({{name}})</h3>
+	<div class="pure-g">
+    	<div class="pure-u-1-3"><p>Name: {{forename}} {{surname}}</p></div>
+    	<div class="pure-u-1-3"><p>Username: {{username}}</p></div>
+    	<div class="pure-u-1-3"><p>Rating: {{rating}}</p></div>
+	</div>
 	{{#matchup}}
-	<p>Your overall score vs {{name}}: {{matchup}}</p>
+	<p>Your overall score vs {{username}}: {{matchup}}</p>
 	{{/matchup}}
-	<p>Rating: {{rating}}</p>
 	{{#description}}
-	<p>{{description}}</p>
+	<p>Description: {{description}}</p>
 	{{/description}}
 	{{^games}}
 	<p>No games played yet.</p>
