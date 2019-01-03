@@ -141,7 +141,7 @@ class League {
             "doctorwhocomposer",
             "Delia",
             "Derbyshire",
-            "guest",
+            "doctor",
             1200,
             "The composer of the Doctor Who theme."
         ));

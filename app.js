@@ -200,9 +200,10 @@ app.route('/people')
 				rating: 1200,
 				description: ''
 			};
+			console.log(data);
 			let errors = validPlayerRegistration.validate(data);
 			if ((errors.length == 0) && !(league.hasOwnProperty(data.username))) {
-				league.addPlayer(data.username, data.forename, data.surname, data.password, data.rating, data.description);
+				league.addPlayer(new Player(data.username, data.forename, data.surname, data.password, data.rating, data.description));
 				res.json({message: 'new user registered'});
 				return;
 			}
