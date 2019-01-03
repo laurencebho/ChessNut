@@ -1,7 +1,14 @@
 @import url('https://fonts.googleapis.com/css?family=Lato');
 
+/*general */
 html {
-	font-family: 'Lato'
+	font-family: 'Lato', sans-serif;
+	font-size: 1.1em;
+}
+
+
+h3 {
+	font-size: 140%;
 }
 
 /* main content */
@@ -11,6 +18,27 @@ html {
     padding-left: 1em;
     padding-right: 1em;
     max-width: 768px;
+}
+
+/*grids*/
+.pure-g > div {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+html, button, input, select, textarea,
+    .pure-g [class *= 'pure-u'] {
+        font-family: 'Lato', sans-serif;
+}
+
+.l-box {
+	padding-right: 0.5em;
+}
+
+.grid {
+	border-bottom: 1px solid black;
+	border-top: 1px solid black;
 }
 
 /* pure menu */

@@ -32,7 +32,7 @@ const validPlayerRegistration = new Schema({
 	username: {
 		type: String,
 		required: true,
-		length: {min: 3, max: 16}
+		length: {min: 3, max: 20}
 	},
     forename: {
 		type: String,
@@ -63,7 +63,7 @@ const validLoginFormat = new Schema({
 	username: {
 		type: String,
 		required: true,
-		length: {min: 3, max: 16}
+		length: {min: 3, max: 20}
 	},
 	password: {
 		type: String,
@@ -203,7 +203,7 @@ app.route('/people')
 			let errors = validPlayerRegistration.validate(data);
 			if ((errors.length == 0) && !(league.hasOwnProperty(data.username))) {
 				league.addPlayer(data.username, data.forename, data.surname, data.password, data.rating, data.description);
-				res.status(200).json({message: 'new user registered'});
+				res.json({message: 'new user registered'});
 				return;
 			}
 		}

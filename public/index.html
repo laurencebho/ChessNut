@@ -48,10 +48,10 @@
 	<form id="loginform" class="pure-form">
 		<legend>Login</legend>
 		<fieldset class="pure-group">
-			<input id='username' type="text" class="pure-input-1-2" placeholder="username">
-			<input id='password' type="password" class="pure-input-1-2" placeholder="password">
+			<input id='username' type="text" class="pure-u-1 pure-u-md-1-2" placeholder="username">
+			<input id='password' type="password" class="pure-u-1 pure-u-md-1-2" placeholder="password">
 		</fieldset>
-		<button id="login-button" type="submit" class="pure-button pure-input-1-2 pure-button-primary">sign in</button>
+		<button id="login-button" type="submit" class="pure-button pure-button-primary pure-u-1 pure-u-md-1-2">sign in</button>
 	</form>
 </script>
 
@@ -98,18 +98,18 @@
 	<form id="registrationform" class="pure-form">
 		<legend>Register</legend>
 		<fieldset class="pure-group">
-			<input id='username' type="text" class="pure-input-1-2" placeholder="username">
-			<input id='forename' type="text" class="pure-input-1-2" placeholder="forename">
-			<input id='surname' type="text" class="pure-input-1-2" placeholder="surname">
-			<input id='password' type="password" class="pure-input-1-2" placeholder="password">
+			<input id='username' type="text" class="pure-u-1 pure-u-md-1-2" placeholder="username">
+			<input id='forename' type="text" class="pure-u-1 pure-u-md-1-2" placeholder="forename">
+			<input id='surname' type="text" class="pure-u-1 pure-u-md-1-2" placeholder="surname">
+			<input id='password' type="password" class="pure-u-1 pure-u-md-1-2" placeholder="password">
 		</fieldset>
 
 		<fieldset class="pure-group">
-			<input id="rating" type="text" class="pure-input-1-2" placeholder="rating">
-			<textarea id="description" class="pure-input-1-2" placeholder="a brief description of yourself"></textarea>
+			<input id="rating" type="text" class="pure-u-1 pure-u-md-1-2" placeholder="rating">
+			<textarea id="description" class="pure-u-1 pure-u-md-1-2" placeholder="a brief description of yourself"></textarea>
 		</fieldset>
 
-		<button id="register-button" type="submit" class="pure-button pure-input-1-2 pure-button-primary">register</button>
+		<button id="register-button" type="submit" class="pure-button pure-button-primary pure-u-1 pure-u-md-1-2">register</button>
 	</form>
 </script>
 
@@ -117,40 +117,50 @@
 	<form id="gameform" class="pure-form">
 	    <fieldset>
 	        <legend>Add Game</legend>
-			<input id='white' type='text' placeholder='white'>
-			<input id='black' type='text' placeholder='black'>
-
-			<select id='gameresult'>
-				<option value='w'>White wins</option>
-				<option value='b'>Black wins</option>
-				<option value='d'>Draw</option>
-			</select>
-
-	        <button id="gamebutton" type="submit" class="pure-button pure-button-primary">add</button>
+	        <div class="pure-g">
+	        	<div class="pure-u-1 pure-u-md-1-4">
+	        		<input id='white' type='text' class="pure-u-23-24" placeholder='white'>
+	        	</div>
+	        	<div class="pure-u-1 pure-u-md-1-4">
+	        		<input id='black' type='text' class="pure-u-23-24" placeholder='black'>
+	        	</div>
+	        	<div class="pure-u-1 pure-u-md-1-4">
+				<select id='gameresult' class="pure-u-23-24">
+					<option value='w'>White wins</option>
+					<option value='b'>Black wins</option>
+					<option value='d'>Draw</option>
+				</select>
+	        	</div>
+	        	<div class="pure-u-1 pure-u-md-1-4">
+					<button id="gamebutton" type="submit" class="pure-button pure-button-primary pure-u-23-24"">add</button>
+				</div>
+			</div>
 	    </fieldset>
 	</form>
 
 	<form id="statusform" class="pure-form pure-form-stacked">
 	    <fieldset>
 	        <legend>Update League Status</legend>
-			<textarea id="status" placeholder="status">{{leagueStatus}}</textarea>
-	        <button id="statusbutton" type="submit" class="pure-button pure-button-primary">update</button>
+			<textarea id="status" class="pure-u-1 pure-u-md-1-2" placeholder="status">{{leagueStatus}}</textarea>
+	        <button id="statusbutton" type="submit" class="pure-button pure-button-primary pure-u-1 pure-u-md-1-2">update</button>
 	    </fieldset>
 	</form>
 </script>
 
 <script id="player" type="x-tmpl-mustache">
-	<div class="pure-g">
-    	<div class="pure-u-1-3"><p>Name: {{forename}} {{surname}}</p></div>
-    	<div class="pure-u-1-3"><p>Username: {{username}}</p></div>
-    	<div class="pure-u-1-3"><p>Rating: {{rating}}</p></div>
+	<h3>{{forename}} {{surname}}</h3>
+	<div class="pure-g grid">
+    	<div class="pure-u-1 pure-u-md-1-2 l-box"><p>Username: {{username}}</p></div>
+    	<div class="pure-u-1 pure-u-md-1-2 l-box"><p>Rating: {{rating}}</p></div>
 	</div>
 	{{#matchup}}
 	<p>Your overall score vs {{username}}: {{matchup}}</p>
 	{{/matchup}}
 	{{#description}}
-	<p>Description: {{description}}</p>
+	<h3>About</h3>
+	<p>{{description}}</p>
 	{{/description}}
+	<h3>Games</h3>
 	{{^games}}
 	<p>No games played yet.</p>
 	{{/games}}
