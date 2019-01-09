@@ -3,19 +3,12 @@ const Player = require('./classes/player.js');
 const Schema = require('validate');
 const express = require('express');
 const app = express();
-const http = require('http').Server(app);
 const router = express.Router();
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const port = 5000;
 
 let league = new League();
 league.addDefaultPlayers();
-
-http.listen(port, (err) => {
-	if (err) return console.log(err);
-	return console.log('Listening on port ' + port);
-});
 
 app.use(express.static('public'));
 app.use(bodyParser.json());
@@ -200,9 +193,8 @@ app.route('/people')
 				rating: 1200,
 				description: ''
 			};
-			console.log(data);
 			let errors = validPlayerRegistration.validate(data);
-			if ((errors.length == 0) && !(league.hasOwnProperty(data.username))) {
+			if ((errors.length == 0) && !(league.players.hasOwnProperty(data.username))) {
 				league.addPlayer(new Player(data.username, data.forename, data.surname, data.password, data.rating, data.description));
 				res.json({message: 'new user registered'});
 				return;
