@@ -41,6 +41,10 @@ html, button, input, select, textarea,
 	border-top: 1px solid black;
 }
 
+/* table */
+.pure-table {
+    width:  100%;
+}
 /* pure menu */
 .custom-wrapper {
   background-color: #000;
