@@ -41,6 +41,10 @@ html, button, input, select, textarea,
 	border-top: 1px solid black;
 }
 
+/* table */
+.pure-table {
+    width:  100%;
+}
 /* pure menu */
 .custom-wrapper {
   background-color: #000;
@@ -118,26 +122,15 @@ html, button, input, select, textarea,
 }
 
 @media (max-width: 47.999em) {
-    .custom-menu-3 {
-      text-align: left;
-    }
 
-    .custom-toggle {
-      display: block;
-    }
+  .custom-menu-3 {
+	  text-align: left;
+  }
 
-    /* table */
-    .pure-table {
-      table-layout: fixed;
-      width: 100%;
-      white-space: nowrap;
-    }
+  .custom-toggle {
+	  display: block;
+  }
 
-    .pure-table td {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
 }
 
 
