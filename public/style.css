@@ -138,30 +138,6 @@ html, button, input, select, textarea,
       overflow: hidden;
       text-overflow: ellipsis;
     }
-
-    .rank {
-        width: 10%
-    }
-
-    .fullname {
-        width: 50%
-    }
-
-    .score {
-        40%
-    }
-    
-    .result {
-        width: 15%
-    }
-
-    .date {
-        width: 25%
-    }
-
-    .username {
-        width: 30%
-    }
 }
 
 
