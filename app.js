@@ -185,7 +185,7 @@ app.route('/people')
 				rating: 1200,
 				description: ''
 			};
-			let errors = validPlayerRegistration.validate(data);
+			let errors = schemas.register.validate(data);
 			if ((errors.length == 0) && !(league.players.hasOwnProperty(data.username))) {
 				league.addPlayer(new Player(data.username, data.forename, data.surname, data.password, data.rating, data.description));
 				res.json({message: 'new user registered'});
