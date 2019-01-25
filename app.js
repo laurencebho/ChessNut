@@ -1,7 +1,7 @@
 const League = require('./classes/league.js');
 const Player = require('./classes/player.js');
-const Schema = require('validate');
 const express = require('express');
+const schemas = require('./utils/schemas.js');
 const app = express();
 const router = express.Router();
 const bodyParser = require('body-parser');
@@ -21,50 +21,6 @@ app.get('/home', (req, res)=> {
     res.json({leaderboard: league.calculateLeaderboard(), leagueStatus: league.leagueStatus});
 });
 
-const validPlayerRegistration = new Schema({
-	username: {
-		type: String,
-		required: true,
-		length: {min: 3, max: 20}
-	},
-    forename: {
-		type: String,
-		required: true,
-		length: {max: 16}
-    },
-    surname: {
-		type: String,
-		required: true,
-		length: {max: 16}
-    },
-	password: {
-		type: String,
-		required: true,
-		length: {min: 5, max: 20}
-	},
-	rating: {
-		type: Number,
-		required: true,
-	},
-	description: {
-		type: String,
-		required: false,
-		length: {max: 500}
-	}
-});
-const validLoginFormat = new Schema({
-	username: {
-		type: String,
-		required: true,
-		length: {min: 3, max: 20}
-	},
-	password: {
-		type: String,
-		required: true,
-		length: {min: 5, max: 20}
-	}
-});
-
 function validateLogin(username, password) {
 	if (username == 'admin' && password == 'guest') return true;
 	else {
@@ -74,7 +30,7 @@ function validateLogin(username, password) {
 
 app.post('/login', (req, res)=> {
 	let data = req.body;
-	let errors = validLoginFormat.validate(data);
+	let errors = schemas.login.validate(data);
 	if (errors.length == 0) {
 		if (validateLogin(data.username, data.password)) {
 			console.log("login success");
@@ -96,7 +52,7 @@ app.get('/logout', (req, res)=> {
 
 app.post('/register', (req, res)=> {
 	let data = req.body;
-	let errors = validPlayerRegistration.validate(data);
+	let errors = schemas.register.validate(data);
 	if (errors.length == 0) {
 		if (!(league.players.hasOwnProperty(data.username)) && (data.username != 'admin')) {
 			let player = new Player(data.username, data.forename, data.surname, data.password, data.rating, data.description);
@@ -144,7 +100,6 @@ app.post('/status', needsAuth, (req, res)=> {
 
 app.get('/:type(player|people)/:username', (req, res)=> { 
     let username = req.params.username;
-    console.log(username);
     if (league.players.hasOwnProperty(username)) {
         let player = league.players[username];
         let data = {
@@ -152,7 +107,8 @@ app.get('/:type(player|people)/:username', (req, res)=> {
             games: league.formatGames(league.getGameHistory(player)),
             forename: player.forename,
             surname: player.surname,
-            rating: player.rating
+            rating: player.rating,
+            editable: req.signedCookies.username == username
         };
         if (player.description != '') data.description = player.description;
         let currPlayer = req.signedCookies.username;
@@ -167,6 +123,44 @@ app.get('/:type(player|people)/:username', (req, res)=> {
 
 app.get('/games', (req,res)=> {
     res.json({games: league.formatGames(league.recentGames())});
+});
+
+app.get('/edit/:username', (req, res)=> {
+    let username = req.params.username;
+    if (req.params.username == req.signedCookies.username && league.players.hasOwnProperty(username)) {
+        let player = league.players[username];
+        let data = {
+            username: username,
+            forename: player.forename,
+            surname: player.surname,
+            password: player.password,
+            rating: player.rating
+        };
+        res.json(data);
+        return;
+    }
+    res.status(400);
+});
+
+app.post('/edit/:username', (req, res)=> {
+    let username = req.params.username;
+	let data = req.body;
+	let errors = schemas.edit.validate(data);
+	if (errors.length == 0) {
+        if (league.players.hasOwnProperty(username)) {
+            let player = league.players[username];
+            player.forename = data.forename;
+            player.surname = data.surname;
+            player.password = data.password;
+            player.rating = data.rating;
+            player.description = data.description;
+            return res.json({type: "success", message: "profile updated"});
+        }
+        res.status(400);
+        return;
+	}
+	res.status(400).json({type: 'error', message: errors[0].message});
+    
 });
 
 app.get('/auth', (req, res)=> {

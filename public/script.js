@@ -6,6 +6,7 @@ $.hashroute('middleware', function(e) { //always runs
         if (privilege == 'admin') e.admin = true;
         if (privilege == 'user') {
             setMenu(privilege, data.username);
+            e.username = data.username;
         }
         else {
             setMenu(privilege);
@@ -50,26 +51,29 @@ $(document).hashroute("/login", ()=> {
 $(document).hashroute("/register", ()=> {
 	display("register");
 	$(document).off("submit", "#registrationform").on("submit", "#registrationform", (e)=> {
-		$.ajax({
-			method: "POST",
-			url: "/register",
-			data: JSON.stringify({
-                username: $("#username").val(),
-                forename: $("#forename").val(),
-                surname: $("#surname").val(),
-                password: $("#password").val(),
-                rating: Number($("#rating").val()),
-                description: $("#description").val()
-            }),
-			success: (data)=> { //data to render homepage
-				console.log("registered and logged in");
-				console.log(data);
-				window.location.hash = '/';
-			},
-            error: (e)=> {
-                displayAlert("registrationform", e.responseJSON);
-            }
-		});
+        if ($("#password").val() != $("#confirm-password").val()) displayAlert("registrationform", {type: "error", message: "passwords do not match"});
+        else {
+            $.ajax({
+                method: "POST",
+                url: "/register",
+                data: JSON.stringify({
+                    username: $("#username").val(),
+                    forename: $("#forename").val(),
+                    surname: $("#surname").val(),
+                    password: $("#password").val(),
+                    rating: Number($("#rating").val()),
+                    description: $("#description").val()
+                }),
+                success: (data)=> { //data to render homepage
+                    console.log("registered and logged in");
+                    console.log(data);
+                    window.location.hash = '/';
+                },
+                error: (e)=> {
+                    displayAlert("registrationform", e.responseJSON);
+                }
+            });
+        }
 		return false;
 	});
 });
@@ -140,6 +144,41 @@ $(document).hashroute("/logout", ()=> {
 $(document).hashroute("/player/:username", (e)=> {
     $.get("/player/" + e.params.username, (data)=> {
         display("player", data);
+    });
+});
+
+$(document).hashroute("/player/:username/edit", (e)=> {
+    //if logged in user is on their own profile page, allow editing
+    if (e.params.username == e.username) { 
+        $.get("/edit/" + e.username, (data)=> {
+            display("edit", data);
+        });
+    }
+    else {
+        display("error403");
+    }
+	$(document).off("submit", "#editform").on("submit", "#editform", ()=> {
+        if ($("#password").val() != $("#confirm-password").val()) displayAlert("editform", {type: "error", message: "passwords do not match"});
+        else {
+            $.ajax({
+                method: "POST",
+                url: "/edit/" + e.username,
+                data: JSON.stringify({
+                    forename: $("#forename").val(),
+                    surname: $("#surname").val(),
+                    password: $("#password").val(),
+                    rating: Number($("#rating").val()),
+                    description: $("#description").val()
+                }),
+                success: (data)=> {
+                    displayAlert("editform", data);
+                },
+                error: (e)=> {
+                    displayAlert("editform", e.responseJSON);
+                }
+            });
+        }
+        return false;
     });
 });
 

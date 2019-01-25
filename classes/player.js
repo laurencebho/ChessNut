@@ -31,6 +31,26 @@ class Player {
 	get description() {
 		return this._description;
 	}
+
+    set forename(forename) {
+        this._forename = forename;
+    }
+
+    set surname(surname) {
+        this._surname = surname;
+    }
+
+    set password(password) {
+        this._password = password;
+    }
+
+    set rating(rating) {
+        this._rating = rating;
+    }
+
+    set description(description) {
+        this._description = description;
+    }
 }
 
 module.exports = Player;

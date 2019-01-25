@@ -20,6 +20,12 @@ h3 {
     max-width: 768px;
 }
 
+/* buttons */
+#edit-button {
+    margin-top: 1em;
+    float: right;
+}
+
 /*grids*/
 .pure-g > div {
     -webkit-box-sizing: border-box;
