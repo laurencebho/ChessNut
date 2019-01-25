@@ -39,7 +39,6 @@ app.post('/login', (req, res)=> {
 			return;
 		}
 		errors.push({message: "invalid login credentials"});
-		console.log(errors);
 	}
 	res.status(400).json({type: 'error', message: errors[0].message});
 });

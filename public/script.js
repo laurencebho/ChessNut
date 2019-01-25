@@ -20,7 +20,6 @@ $(document).hashroute("/", ()=> {
         method: "GET",
         url: "/home",
         success: (data)=> { //data to render homepage
-            console.log(data);
             display("leaderboard", data);
         }
     });
@@ -37,7 +36,6 @@ $(document).hashroute("/login", ()=> {
 			data: JSON.stringify({username: $("#username").val(), password: $("#password").val()}),
 			success: (data)=> { //data to render homepage
 				console.log("logged in");
-				console.log(data);
 				window.location.hash = '/';
 			},
             error: (e)=> {
@@ -66,7 +64,6 @@ $(document).hashroute("/register", ()=> {
                 }),
                 success: (data)=> { //data to render homepage
                     console.log("registered and logged in");
-                    console.log(data);
                     window.location.hash = '/';
                 },
                 error: (e)=> {
@@ -84,7 +81,6 @@ $(document).hashroute("/update", (e)=> {
     }
     else {
         $.get("/update", (data)=> {
-            console.log(data);
             display("update", data);
             $(document).off("submit", "#gameform").on("submit", "#gameform", ()=> {
                 let gameResult;
@@ -149,7 +145,6 @@ $(document).hashroute("/player/:username", (e)=> {
 });
 
 $(document).hashroute("/player/:username/edit", (e)=> {
-    console.log(e.admin);
     //if logged in user is on their own profile page, allow editing
     if (e.params.username == e.username || e.admin) { 
         $.get("/edit/" + e.params.username, (data)=> {
