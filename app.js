@@ -108,7 +108,7 @@ app.get('/:type(player|people)/:username', (req, res)=> {
             forename: player.forename,
             surname: player.surname,
             rating: player.rating,
-            editable: req.signedCookies.username == username
+            editable: (req.signedCookies.username == username || req.signedCookies.username == 'admin')
         };
         if (player.description != '') data.description = player.description;
         let currPlayer = req.signedCookies.username;
@@ -127,7 +127,7 @@ app.get('/games', (req,res)=> {
 
 app.get('/edit/:username', (req, res)=> {
     let username = req.params.username;
-    if (req.params.username == req.signedCookies.username && league.players.hasOwnProperty(username)) {
+    if ((req.signedCookies.username == username || req.signedCookies.username == 'admin') && league.players.hasOwnProperty(username)) {
         let player = league.players[username];
         let data = {
             username: username,
@@ -145,9 +145,9 @@ app.get('/edit/:username', (req, res)=> {
 app.post('/edit/:username', (req, res)=> {
     let username = req.params.username;
 	let data = req.body;
-	let errors = schemas.edit.validate(data);
-	if (errors.length == 0) {
-        if (league.players.hasOwnProperty(username)) {
+    if ((req.signedCookies.username == username || req.signedCookies.username == 'admin') && league.players.hasOwnProperty(username)) {
+	    let errors = schemas.edit.validate(data);
+        if (errors.length == 0) {
             let player = league.players[username];
             player.forename = data.forename;
             player.surname = data.surname;
@@ -156,10 +156,9 @@ app.post('/edit/:username', (req, res)=> {
             player.description = data.description;
             return res.json({type: "success", message: "profile updated"});
         }
-        res.status(400);
-        return;
-	}
-	res.status(400).json({type: 'error', message: errors[0].message});
+        return res.status(400).json({type: 'error', message: errors[0].message});
+    }
+    res.status(400);
     
 });
 
@@ -208,7 +207,7 @@ function needsAuth(req, res, next) {
 	if (privilege(req) == 'admin') {
 		return next();
 	}
-	res.status(400).json({message: 'You must be signed in as admin to use this page'});	
+	res.status(403).json({message: 'You must be signed in as admin to use this page'});	
 }
 
 module.exports = app;

@@ -149,9 +149,10 @@ $(document).hashroute("/player/:username", (e)=> {
 });
 
 $(document).hashroute("/player/:username/edit", (e)=> {
+    console.log(e.admin);
     //if logged in user is on their own profile page, allow editing
-    if (e.params.username == e.username) { 
-        $.get("/edit/" + e.username, (data)=> {
+    if (e.params.username == e.username || e.admin) { 
+        $.get("/edit/" + e.params.username, (data)=> {
             display("edit", data);
         });
     }
