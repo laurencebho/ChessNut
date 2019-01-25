@@ -159,7 +159,7 @@ $(document).hashroute("/player/:username/edit", (e)=> {
         else {
             $.ajax({
                 method: "POST",
-                url: "/edit/" + e.username,
+                url: "/edit/" + e.params.username,
                 data: JSON.stringify({
                     forename: $("#forename").val(),
                     surname: $("#surname").val(),
