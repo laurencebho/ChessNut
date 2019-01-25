@@ -134,7 +134,7 @@ app.get('/edit/:username', (req, res)=> {
             surname: player.surname,
             password: player.password,
             rating: player.rating,
-            description: data.description
+            description: player.description
         };
         res.json(data);
         return;
