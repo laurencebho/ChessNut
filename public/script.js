@@ -113,7 +113,7 @@ $(document).hashroute("/update", (e)=> {
                         displayAlert("gameform", e.responseJSON);
                     }
                 });
-            return false;
+                return false;
             });
 
             $(document).off("submit", "#statusform").on("submit", "#statusform", ()=> {
@@ -129,6 +129,7 @@ $(document).hashroute("/update", (e)=> {
                         displayAlert("statusform", e.responseJSON);
                     }
                 });
+                return false;
             });
         });
     }
