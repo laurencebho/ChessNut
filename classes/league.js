@@ -145,7 +145,35 @@ class League {
             1200,
             "The composer of the Doctor Who theme."
         ));
+
+        this.addPlayer(new Player(
+            "laurie",
+            "Laurie",
+            "Ho",
+            "guest",
+            1950,
+            "The creator of this app."
+        ));
+        
+        this.addPlayer(new Player(
+            "mcarlsen",
+            "Magnus",
+            "Carlsen",
+            "guest",
+            2830,
+            "I am the current World Chess Champion and the highest ranked player in the world."
+        ));
     }	
+    
+    addDefaultGames() {
+        let d = new Date();
+        let dateString = d.toISOString().substring(0, 10); //yyyy-mm-dd format
+        this.addGame({date: dateString, white: "doctorwhocomposer", black: "laurie", result: [0.5, 0.5]});
+        this.addGame({date: dateString, white: "laurie", black: "doctorwhocomposer", result: [1, 0]});
+        this.addGame({date: dateString, white: "mcarlsen", black: "laurie", result: [1, 0]});
+        this.addGame({date: dateString, white: "laurie", black: "mcarlsen", result: [0, 1]});
+        this.addGame({date: dateString, white: "mcarlsen", black: "doctorwhocomposer", result: [0.5, 0.5]});
+    }
 }
 
 module.exports = League;

@@ -9,6 +9,7 @@ const cookieParser = require('cookie-parser');
 
 let league = new League();
 league.addDefaultPlayers();
+league.addDefaultGames();
 
 app.use(express.static('public'));
 app.use(bodyParser.json());
